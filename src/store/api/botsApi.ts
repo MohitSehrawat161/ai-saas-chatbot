@@ -27,6 +27,7 @@ export interface CreateBotData {
   description: string;
   avatarId: string;
   themeColor: string;
+  botRole: string;
 }
 
 export interface UpdateBotData {
@@ -63,6 +64,12 @@ interface User {
   isKnowledgeBase: boolean;
 }
 
+
+interface SignUpData {
+  username: string;
+  email: string;
+  password: string;
+}
 
 
 // Bots API slice
@@ -110,8 +117,14 @@ export const botsApi = baseApi.injectEndpoints({
         method: 'GET',
       }),
     }),
-    
 
+    signUp: builder.mutation<SignUpData, SignUpData>({
+      query: (signUpData) => ({
+        url: `/auth/register`,
+        method: 'POST',
+        data: signUpData,
+      }),
+    }),
   }),
 });
 
@@ -121,6 +134,7 @@ export const {
   useCreateBotMutation,
   useUploadKnowledgeBaseMutation,
   useGetAvatarsQuery,
-  useGetUserQuery
+  useGetUserQuery,
+  useSignUpMutation
 } = botsApi;
 

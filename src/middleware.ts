@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 export function middleware(request: NextRequest) {
-  const publicPaths = ['/login']; // pages that don't need auth
+  const publicPaths = ['/login', '/sign-up']; // pages that don't need auth
   const { pathname } = request.nextUrl;
 
   // Allow public routes

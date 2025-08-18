@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  selectedRole: "Customer Support",
+  selectedRole: "Customer Care Assistant",
   description: "",
   botName: "John",
   botAvatar: "/avatar2.avif",

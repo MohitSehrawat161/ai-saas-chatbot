@@ -42,13 +42,14 @@ const PreviewBot = () => {
                 systemPrompt: systemPrompt,
                 modelProvider: "openai",
                 modelType: "gpt-4o",
-                temperature: 0.7,
+                temperature: 0.1,
                 memoryEnabled: true,
                 language: "en",
                 memberShip: planType,
                 description: description,
                 avatarId: avatarId,
                 themeColor: color,
+                botRole: selectedRole,
             }).unwrap();
 
             console.log(response);

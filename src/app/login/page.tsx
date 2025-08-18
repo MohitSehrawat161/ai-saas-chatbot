@@ -42,16 +42,16 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-indigo-600">
+    <div className="min-h-screen flex items-center bg-gradient-to-br from-blue-50 to-indigo-100 justify-center bg-gradient-to-br ">
       <Toaster position="top-right" />
       <div className="w-full max-w-md p-8 bg-white/90 rounded-2xl shadow-xl flex flex-col items-center">
-        <Image
+        {/* <img
           src="/logo.png"
           alt="Company Logo"
           width={150}
           height={48}
           className="mb-4"
-        />
+        /> */}
         <h1 className="text-2xl font-bold mb-2 text-gray-900 text-center">
           Login to Deploy Your AI ChatBot
         </h1>
@@ -92,7 +92,7 @@ export default function LoginPage() {
         </Button> */}
         <p className="text-sm text-gray-600 text-center">
           Don’t have an account?{' '}
-          <Link href="#" className="text-blue-600 hover:underline font-medium">
+          <Link href="/sign-up" className="text-blue-600 hover:underline font-medium">
             Sign up
           </Link>
         </p>

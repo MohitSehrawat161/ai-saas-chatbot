@@ -182,7 +182,7 @@ function SidebarMenuContent() {
 export default function Layout({ children, title }: LayoutProps) {
   return (
     <SidebarProvider >
-      <div className="min-h-screen flex bg-gradient-to-br from-blue-100 to-indigo-200 w-full">
+      <div className="min-h-screen flex bg-gradient-to-br from-gray-100 to-gray-200 w-full">
         <Sidebar className="bg-white/90 shadow-xl fixed left-0 top-0 h-full" collapsible="icon">
           <SidebarHeader>
             <SidebarHeaderContent />

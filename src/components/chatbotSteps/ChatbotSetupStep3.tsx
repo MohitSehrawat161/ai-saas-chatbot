@@ -77,11 +77,11 @@ const ChatbotSetupStep3 = () => {
 
     const handleSave = async () => {
         try {
-            dispatch(setSteps(4));
+            // dispatch(setSteps(4));
             setIsFileUploading(true);
             if (uploadedFiles.length === 0) {
                 toast.error("Please upload Knowledge Base");
-                // return;
+                return;
             }
             const formData = new FormData();
             formData.append("file", uploadedFiles[0].file);
@@ -131,8 +131,8 @@ const ChatbotSetupStep3 = () => {
             </div>
 
             <div className="space-y-6">
-                {/* Upload Area */}
-                <div
+            
+          {uploadedFiles.length === 0 &&      <div
                     className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors cursor-pointer ${isDragOver
                         ? 'border-indigo-500 bg-indigo-50'
                         : 'border-gray-300 hover:border-indigo-400'
@@ -163,7 +163,7 @@ const ChatbotSetupStep3 = () => {
                             <p className="ml-2">Max size: 2MB per file</p>
                         )}
                     </div>
-                </div>
+                </div>}
 
                 {/* Upload Error */}
                 {uploadError && (
@@ -197,7 +197,7 @@ const ChatbotSetupStep3 = () => {
                                         <div className="text-sm text-gray-500 capitalize">
                                             {file.status === "uploading" && "Uploading..."}
                                             {file.status === "processing" && "Processing..."}
-                                            {file.status === "processed" && "Processed"}
+                                            {file.status === "processed" && "Attached"}
                                             {file.status === "error" && "Error"}
                                         </div>
                                         <button
@@ -257,7 +257,7 @@ const ChatbotSetupStep3 = () => {
             </div>
             <div className="mt-auto self-end flex items-center">
                 <Button className="mr-2 bg-gray-700 text-white" onClick={() => dispatch(setSteps(2))}>Back</Button>
-                <Button className="w-28" onClick={handleNext} disabled={isFileUploading}>{isFileUploading ? <Loader className="animate-spin" /> : "Save & Next"}</Button>
+                <Button className="w-28" onClick={handleNext} disabled={isFileUploading}>{isFileUploading ? <Loader className="animate-spin" /> : "Next"}</Button>
             </div>
         </div>
     )
