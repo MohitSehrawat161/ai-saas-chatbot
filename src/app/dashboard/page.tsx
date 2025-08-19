@@ -42,12 +42,12 @@ function OverviewCards() {
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:scale-105 transition-all duration-200">
-        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">1,245</div>
+        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">0</div>
         <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total Messages</div>
       </div>
 
       <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6 border border-gray-100 dark:border-gray-700/50 hover:shadow-xl hover:scale-105 transition-all duration-200">
-        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">312</div>
+        <div className="text-3xl font-bold text-indigo-600 dark:text-indigo-400 mb-2">0</div>
         <div className="text-gray-600 dark:text-gray-400 text-sm font-medium">Total End Users</div>
       </div>
     </div>
