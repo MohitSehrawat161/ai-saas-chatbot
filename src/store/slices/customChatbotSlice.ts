@@ -4,14 +4,15 @@ const initialState = {
   selectedRole: "Customer Care Assistant",
   description: "",
   botName: "John",
-  botAvatar: "/avatar2.avif",
+  botAvatar: "https://agenticuploads.s3.ap-south-1.amazonaws.com/avatarimg/1.jpeg",
   domain: "",
   steps: 1,
   color: "#00043b",
   systemPrompt: "",
   role: "",
   personality: "",
-  avatarId: "",
+  avatarId: "689dcaabe3cdec2f857f044d",
+  isEditing: false,
 };
 
 const customChatbotSlice = createSlice({
@@ -45,8 +46,32 @@ const customChatbotSlice = createSlice({
     setAvatarId: (state, action) => {
       state.avatarId = action.payload;
     },
+    resetCustomChatbot: (state) => {
+      state.selectedRole = "Customer Care Assistant";
+      state.description = "";
+      state.botName = "John";
+      state.botAvatar = "/avatar2.avif";
+      state.domain = "";
+      state.steps = 1;
+      state.color = "#00043b";
+      state.systemPrompt = "";
+      state.role = "";
+      state.personality = "";
+      state.avatarId = "";
+      state.isEditing = false;
+    },
   },
 });
 
-export const { setSelectedRole, setDescription, setSteps, setBotName, setBotAvatar, setBotColor, setDomain, setSystemPrompt, setAvatarId } = customChatbotSlice.actions;
+export const {
+  setSelectedRole,
+  setDescription,
+  setSteps,
+  setBotName,
+  setBotAvatar,
+  setBotColor,
+  setDomain,
+  setSystemPrompt,
+  setAvatarId,
+  resetCustomChatbot } = customChatbotSlice.actions;
 export default customChatbotSlice.reducer;

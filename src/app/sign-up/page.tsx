@@ -8,6 +8,7 @@ import { useSignUpMutation } from "@/store/api/botsApi";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
+import { Eye, EyeOff, Loader2 } from "lucide-react";
 
 interface FormData {
   username: string;
@@ -37,6 +38,7 @@ const SignUpPage = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [signUp, { isLoading }] = useSignUpMutation();
   const router = useRouter();
+
   const validateForm = (): boolean => {
     const newErrors: FormErrors = {};
 
@@ -104,7 +106,6 @@ const SignUpPage = () => {
     
     try {
       const response = await signUp(formData).unwrap();
-      // Cookies.set("token", response.accessToken);
       console.log(response);
       toast.success("Account created successfully! Please check your email for verification.");
       router.push("/login");
@@ -130,7 +131,7 @@ const SignUpPage = () => {
       { label: "Weak", color: "bg-orange-500" },
       { label: "Fair", color: "bg-yellow-500" },
       { label: "Good", color: "bg-blue-500" },
-      { label: "Strong", color: "bg-green-500" }
+      { label: "Strong", color: "bg-emerald-500" }
     ];
 
     return {
@@ -142,20 +143,20 @@ const SignUpPage = () => {
   const passwordStrength = getPasswordStrength(formData.password);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center p-4">
-      <div className="w-full max-w-md">
+    <div className="min-h-screen bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] flex items-center justify-center p-4">
+      <div className="w-full max-w-[420px]">
         {/* Header */}
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="text-center mb-5">
+          <h1 className="text-4xl font-semibold text-gray-900 dark:text-white mb-3 font-inter">
             Create Account
           </h1>
-          <p className="text-gray-600 dark:text-gray-400">
-            Join us and start building amazing chatbots
+          <p className="text-gray-500 dark:text-gray-400 text-lg">
+            Join us and start building amazing AI chatbots
           </p>
         </div>
 
-        {/* Signup Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200 dark:border-gray-700">
+        {/* Signup Form Card */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-100 dark:border-gray-700/50">
           <form onSubmit={handleSubmit} className="space-y-6">
             {/* Username Field */}
             <div>
@@ -168,12 +169,14 @@ const SignUpPage = () => {
                 placeholder="Enter your username"
                 value={formData.username}
                 onChange={(e) => handleInputChange("username", e.target.value)}
-                className={errors.username ? "border-red-500 focus-visible:ring-red-500/50" : ""}
+                className={`rounded-lg transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+                  errors.username ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 dark:border-gray-600"
+                }`}
                 aria-invalid={!!errors.username}
                 aria-describedby={errors.username ? "username-error" : undefined}
               />
               {errors.username && (
-                <p id="username-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                <p id="username-error" className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {errors.username}
                 </p>
               )}
@@ -190,12 +193,14 @@ const SignUpPage = () => {
                 placeholder="Enter your email"
                 value={formData.email}
                 onChange={(e) => handleInputChange("email", e.target.value)}
-                className={errors.email ? "border-red-500 focus-visible:ring-red-500/50" : ""}
+                className={`rounded-lg transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 ${
+                  errors.email ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 dark:border-gray-600"
+                }`}
                 aria-invalid={!!errors.email}
                 aria-describedby={errors.email ? "email-error" : undefined}
               />
               {errors.email && (
-                <p id="email-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                <p id="email-error" className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {errors.email}
                 </p>
               )}
@@ -213,34 +218,36 @@ const SignUpPage = () => {
                   placeholder="Create a strong password"
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
-                  className={errors.password ? "border-red-500 focus-visible:ring-red-500/50 pr-12" : "pr-12"}
+                  className={`rounded-lg transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pr-12 ${
+                    errors.password ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 dark:border-gray-600"
+                  }`}
                   aria-invalid={!!errors.password}
                   aria-describedby={errors.password ? "password-error" : undefined}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
                 >
-                  {showPassword ? "👁️" : "👁️‍🗨️"}
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               
               {/* Password Strength Indicator */}
               {formData.password && (
-                <div className="mt-2">
-                  <div className="flex items-center gap-2 mb-1">
+                <div className="mt-3">
+                  <div className="flex items-center gap-3 mb-2">
                     <div className="flex gap-1">
                       {[1, 2, 3, 4, 5].map((level) => (
                         <div
                           key={level}
-                          className={`h-1 w-8 rounded-full transition-colors ${
+                          className={`h-1.5 w-6 rounded-full transition-all duration-300 ${
                             level <= passwordStrength.score ? passwordStrength.color : "bg-gray-200 dark:bg-gray-600"
                           }`}
                         />
                       ))}
                     </div>
-                    <span className="text-xs text-gray-600 dark:text-gray-400">
+                    <span className="text-xs font-medium text-gray-600 dark:text-gray-400">
                       {passwordStrength.label}
                     </span>
                   </div>
@@ -248,7 +255,7 @@ const SignUpPage = () => {
               )}
               
               {errors.password && (
-                <p id="password-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                <p id="password-error" className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {errors.password}
                 </p>
               )}
@@ -266,20 +273,22 @@ const SignUpPage = () => {
                   placeholder="Confirm your password"
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                  className={errors.confirmPassword ? "border-red-500 focus-visible:ring-red-500/50 pr-12" : "pr-12"}
+                  className={`rounded-lg transition-all duration-200 focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 pr-12 ${
+                    errors.confirmPassword ? "border-red-500 focus:ring-red-500/20" : "border-gray-200 dark:border-gray-600"
+                  }`}
                   aria-invalid={!!errors.confirmPassword}
                   aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
                 />
                 <button
                   type="button"
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 transition-colors duration-200"
                 >
-                  {showConfirmPassword ? "👁️" : "👁️‍🗨️"}
+                  {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
               {errors.confirmPassword && (
-                <p id="confirm-password-error" className="mt-1 text-sm text-red-600 dark:text-red-400">
+                <p id="confirm-password-error" className="mt-2 text-sm text-red-600 dark:text-red-400">
                   {errors.confirmPassword}
                 </p>
               )}
@@ -289,11 +298,11 @@ const SignUpPage = () => {
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full h-11 text-base font-medium"
+              className="w-full h-11 text-base font-medium bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-lg transition-all duration-200 hover:scale-105 focus:ring-2 focus:ring-indigo-500/20 focus:outline-none"
             >
               {isSubmitting ? (
                 <div className="flex items-center gap-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <Loader2 className="w-4 h-4 animate-spin" />
                   Creating Account...
                 </div>
               ) : (
@@ -303,12 +312,12 @@ const SignUpPage = () => {
           </form>
 
           {/* Divider */}
-          <div className="relative my-6">
+          <div className="relative my-4">
             <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t border-gray-300 dark:border-gray-600" />
+              <div className="w-full border-t border-gray-200 dark:border-gray-600" />
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400">
+              <span className="px-4 bg-white dark:bg-gray-800 text-gray-500 dark:text-gray-400 font-medium">
                 Already have an account?
               </span>
             </div>
@@ -318,7 +327,7 @@ const SignUpPage = () => {
           <div className="text-center">
             <Link
               href="/login"
-              className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors"
+              className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium transition-colors duration-200 hover:underline"
             >
               Sign in to your account
             </Link>
@@ -326,14 +335,14 @@ const SignUpPage = () => {
         </div>
 
         {/* Terms and Privacy */}
-        <div className="text-center mt-6">
-          <p className="text-xs text-gray-500 dark:text-gray-400">
+        <div className="text-center mt-8">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             By creating an account, you agree to our{" "}
-            <Link href="/terms" className="text-blue-600 dark:text-blue-400 hover:underline">
+            <Link href="/terms" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
               Terms of Service
             </Link>{" "}
             and{" "}
-            <Link href="/privacy" className="text-blue-600 dark:text-blue-400 hover:underline">
+            <Link href="/privacy" className="text-indigo-600 dark:text-indigo-400 hover:underline font-medium">
               Privacy Policy
             </Link>
           </p>

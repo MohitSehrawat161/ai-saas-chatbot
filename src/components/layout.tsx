@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { GrDeploy } from "react-icons/gr";
 import Cookies from 'js-cookie'
 import { baseApi } from "@/store/api";
@@ -23,11 +23,15 @@ import {
   Settings,
   Menu,
   User,
-  Upload
+  Upload,
+  ChevronDown,
+  LogOut,
+  Bell,
+  Search
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 interface LayoutProps {
   children: ReactNode;
@@ -35,14 +39,54 @@ interface LayoutProps {
 }
 
 function Avatar({ name }: { name: string }) {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const router = useRouter();
+  const dispatch = useDispatch();
+  
   const initials = name
     .split(" ")
     .map((n) => n[0])
     .join("")
     .toUpperCase();
+
+  const handleLogout = () => {
+    Cookies.remove("token");
+    router.push("/login");
+    dispatch(baseApi.util.resetApiState());
+    setIsDropdownOpen(false);
+  };
+
   return (
-    <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
-      {initials}
+    <div className="relative cursor-pointer">
+      <button
+        onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+        className="flex items-center gap-2 p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors duration-200"
+      >
+        <div className="w-9 h-9 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-white font-semibold shadow-md">
+          {initials}
+        </div>
+        <ChevronDown className={`h-4 w-4 text-gray-600 dark:text-gray-400 transition-transform duration-200 ${
+          isDropdownOpen ? 'rotate-180' : ''
+        }`} />
+      </button>
+
+      {/* Dropdown Menu */}
+      {isDropdownOpen && (
+        <div className="absolute  right-0 top-full mt-2 w-48 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700/50 py-2 z-50">
+          <div className="px-4 py-2 border-b border-gray-100 dark:border-gray-700">
+            <p className="text-sm font-medium text-gray-900 dark:text-white">{name}</p>
+            <p className="text-xs text-gray-500 dark:text-gray-400">john@example.com</p>
+          </div>
+        
+          <button 
+            onClick={handleLogout}
+            className="w-full cursor-pointer px-4 py-2 text-left text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors duration-200 flex items-center gap-2"
+          >
+            <LogOut className="h-4 w-4" />
+            Logout
+          </button>
+        </div>
+      )}
     </div>
   );
 }
@@ -50,28 +94,24 @@ function Avatar({ name }: { name: string }) {
 function TopBar({ title }: { title?: string }) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-  const router = useRouter();
-  const dispatch = useDispatch();
-  const handleLogout = () => {
-    Cookies.remove("token");
-    router.push("/login");
-    dispatch(baseApi.util.resetApiState());
-
-  };
 
   return (
     <header
-      className={`flex items-center justify-between px-6 py-4 bg-white shadow-sm fixed top-0 z-10 transition-all duration-200 ${isCollapsed ? 'left-12 right-0' : 'left-64 right-0'
-        }`}
+      className={`flex items-center justify-between px-6 py-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-sm border-b border-gray-100 dark:border-gray-700/50 fixed top-0 z-20 transition-all duration-300 ${
+        isCollapsed ? 'left-16 lg:left-10' : 'left-62 lg:left-64'
+      } right-0`}
     >
       <div className="flex items-center gap-4">
-        <SidebarTrigger className="p-2 hover:bg-gray-100 rounded-md transition-colors">
-          <Menu className="h-5 w-5 text-gray-600" />
+        <SidebarTrigger className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200">
+          <Menu className="h-5 w-5 text-gray-600 dark:text-gray-400" />
         </SidebarTrigger>
-        <div className="text-lg font-semibold text-gray-800">{title || "ChatPilot"}</div>
+        <div className="text-lg font-semibold text-gray-900 dark:text-white">{title || "ChatBot"}</div>
       </div>
-      <div className="flex items-center gap-4">
-        <Button onClick={handleLogout}>Logout</Button>
+      
+      <div className="flex items-center gap-4 cursor-pointer">
+        {/* Search Icon */}
+      
+        
         <Avatar name="John Doe" />
       </div>
     </header>
@@ -86,7 +126,7 @@ function LayoutContent({ children, title }: LayoutProps) {
     <main className="flex-1 flex-col min-h-screen">
       <TopBar title={title} />
       <div
-        className={`flex-1 p-6 md:p-10 mt-16 transition-all duration-300 m-auto`}
+        className={`flex-1 p-2 lg:px-6 lg:py-2 mt-20 transition-all duration-300 `}
       >
         {children}
       </div>
@@ -98,13 +138,17 @@ function SidebarHeaderContent() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
 
-
   return (
-    <div className="">
-      <div className="text-xl font-bold flex items-center tracking-tight">
-        <img src="/logo.png" alt="ChatPilot" width={70} height={100} />
+    <div className={`${isCollapsed?"py-4":'p-4'} mr-2`}>
+      <div className="flex items-center gap-3">
+        <div className="flex-shrink-0">
+          <img src="/logo.png" alt="ChatPilot" width={40} height={40} className="rounded-lg" />
+        </div>
         {!isCollapsed && (
-          <span className="text-2xl mr-5 relative left-[-10px] ml-4">ChatBot</span>
+          <div className="flex flex-col">
+            <span className="text-xl font-bold text-gray-900 dark:text-white">ChatBot</span>
+            <span className="text-xs text-gray-500 dark:text-gray-400">AI Chatbot Platform</span>
+          </div>
         )}
       </div>
     </div>
@@ -114,7 +158,9 @@ function SidebarHeaderContent() {
 function SidebarMenuContent() {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
+  const pathname = usePathname();
   const { planType } = useSelector((state: any) => state.user);
+  
   const menuItems = [
     {
       href: "/dashboard",
@@ -122,24 +168,6 @@ function SidebarMenuContent() {
       label: "Dashboard",
       tooltip: "Dashboard"
     },
-    // {
-    //   href: "/llm-settings",
-    //   icon: Settings,
-    //   label: "LLM Settings",
-    //   tooltip: "LLM Settings"
-    // },
-    // {
-    //   href: "/rag-config",
-    //   icon: BarChart3,
-    //   label: "RAG Configuration",
-    //   tooltip: "RAG Configuration"
-    // },
-    // {
-    //   href: "/doc-upload",
-    //   icon: Upload,
-    //   label: "Knowledge Base ",
-    //   tooltip: "Document Upload"
-    // },
     {
       href: "/create-bot",
       icon: Bot,
@@ -152,24 +180,41 @@ function SidebarMenuContent() {
       label: "My Bots",
       tooltip: "My Bots"
     },
-    // {
-    //   href: "#",
-    //   icon: Settings,
-    //   label: "Settings",
-    //   tooltip: "Settings"
-    // }
   ];
 
   return (
-    <SidebarMenu className="w-full rounded-lg">
+    <SidebarMenu className="w-full space-y-1">
       {menuItems.map((item, index) => {
         const IconComponent = item.icon;
+        const isActive = pathname === item.href;
+        
         return (
-          <SidebarMenuItem key={index} className="w-full ">
-            <SidebarMenuButton asChild tooltip={item.tooltip} className={`hover:bg-gray-200 ${item.href === '/rag-config' && planType === "free" ? 'hidden' : ''}`}>
-              <Link href={item.href} className={`font-medium flex items-center gap-2 ${isCollapsed ? 'justify-center' : ''}`}>
-                <IconComponent className="h-5 w-5" />
-                {!isCollapsed && <span>{item.label}</span>}
+          <SidebarMenuItem key={index} className="w-full">
+            <SidebarMenuButton 
+              asChild 
+              tooltip={item.tooltip} 
+              className={`w-full transition-all duration-200 mr-2 ${
+                isActive 
+                  ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400  ' 
+                  : 'hover:bg-gray-200 dark:hover:bg-gray-700/50 text-gray-700 dark:text-gray-300'
+              }`}
+            >
+              <Link 
+                href={item.href} 
+                className={`font-medium flex items-center gap-3 px-3 py-2.5 rounded-lg ${
+                  isCollapsed ? 'justify-center' : ''
+                }`}
+              >
+                <IconComponent className={`h-5 w-5  ${
+                  isActive ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'
+                }`} />
+                {!isCollapsed && (
+                  <span className={`${
+                    isActive ? 'font-semibold' : 'font-medium'
+                  }`}>
+                    {item.label}
+                  </span>
+                )}
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
@@ -181,13 +226,16 @@ function SidebarMenuContent() {
 
 export default function Layout({ children, title }: LayoutProps) {
   return (
-    <SidebarProvider >
-      <div className="min-h-screen flex bg-gradient-to-br from-gray-100 to-gray-200 w-full">
-        <Sidebar className="bg-white/90 shadow-xl fixed left-0 top-0 h-full" collapsible="icon">
+    <SidebarProvider>
+      <div className="min-h-screen flex bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] w-full">
+        <Sidebar 
+          className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-xl border-r border-gray-100 dark:border-gray-700/50 fixed left-0 top-0 h-full z-30" 
+          collapsible="icon"
+        >
           <SidebarHeader>
             <SidebarHeaderContent />
           </SidebarHeader>
-          <SidebarContent className="px-2">
+          <SidebarContent className="px-2 py-4">
             <SidebarMenuContent />
           </SidebarContent>
         </Sidebar>

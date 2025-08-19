@@ -3,15 +3,20 @@ import { baseApi } from './baseApi';
 // Types
 export interface BotResponse {
   _id: string;
+  botAvatar: string;
+  botRole: string;
+  createdAt: string; // ISO date string, could also be Date if you want to parse it
+  deployUrl: string;
+  domain: string;
+  language: string;
+  memberShip: "free" | "pro" | "enterprise"; 
+  memoryEnabled: boolean;
+  modelProvider: string;
+  modelType: string; 
   name: string;
-  description?: string;
-  type: string;
-  status: 'active' | 'inactive' | 'training';
-  model?: string;
-  createdAt: string;
-  updatedAt: string;
-  userId: string;
-  deployUrl?: string;
+  systemPrompt: string;
+  temperature: number;
+  themeColor: string;
 }
 
 export interface CreateBotData {
@@ -125,7 +130,15 @@ export const botsApi = baseApi.injectEndpoints({
         data: signUpData,
       }),
     }),
+
+    deleteBot: builder.mutation<void, string>({
+      query: (id: string) => ({
+        url: `/chatbots/${id}`,
+        method: 'DELETE',
+      }),
+    }),
   }),
+
 });
 
 // Export hooks
@@ -135,6 +148,7 @@ export const {
   useUploadKnowledgeBaseMutation,
   useGetAvatarsQuery,
   useGetUserQuery,
-  useSignUpMutation
+  useSignUpMutation,
+  useDeleteBotMutation
 } = botsApi;
 

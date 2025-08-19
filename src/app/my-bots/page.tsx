@@ -43,18 +43,18 @@ const BotsPage = () => {
 
   return (
     <Layout>
-      <div className="max-w-3x p-6 rounded-2xl bg-white mx-auto py-10">
+      <div className="max-w-3x p-6 rounded-2xl bg-white mx-auto py-10 mt-4">
         <h1 className="text-2xl font-bold text-gray-900 mb-6">All Bots</h1>
      
         <BotCard/>
         {bots?.length === 0 && (
-          <div className="mt-10 text-center flex flex-col items-center justify-center">
+          <div className="mt-2 text-center flex flex-col items-center justify-center">
             <p className="text-lg font-medium text-gray-700 mb-4 flex items-center justify-center gap-2">
               <Bot className="w-5 h-5 text-indigo-600" />
               Start creating Chat bot now and bring your ideas to life!
             </p>
             <Link href="/create-bot">
-            <Button className="flex items-center gap-2 self-center ">
+            <Button className="flex items-center gap-2 self-center bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 hover:scale-105 transition-all duration-200">
               <PlusCircle className="w-4 h-4" />
               Create Bot
             </Button>

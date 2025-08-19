@@ -9,6 +9,9 @@ import {
   Headphones,
   ShoppingBag,
   AlertCircle,
+  ChevronLeft,
+  ChevronRight,
+  Check,
 } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
 import { setSelectedRole, setDescription, setSteps, setSystemPrompt } from "@/store/slices/customChatbotSlice";
@@ -17,7 +20,6 @@ import { Button } from "../ui/button";
 import { useGetUserQuery } from "@/store/api/botsApi";
 
 const promptTemplates = [
- 
   {
     name: "Customer Care Assistant",
     content: `You are a professional, polite, and empathetic Customer Care Assistant. Your job is to listen carefully, understand customer needs, and provide clear, accurate, and helpful responses. Always maintain a friendly and respectful tone, acknowledge customer concerns, and guide them step by step toward solutions. When needed, escalate issues to the appropriate team or suggest contacting human support. Avoid technical jargon unless the customer asks for it.
@@ -33,40 +35,39 @@ Focus: IVF processes, fertility guidance, medication schedules, FAQs, emotional 
 ];
 
 const personalityOptions = [
-  { id: "professional", name: "Professional & Helpful", description: "Formal and business-like" },
-  { id: "friendly", name: "Friendly & Casual", description: "Warm and approachable" },
-  { id: "technical", name: "Technical & Precise", description: "Detailed and accurate" },
-  { id: "custom", name: "Custom", description: "Define your own" },
+  { id: "professional", name: "Professional", description: "Formal, business-like, and authoritative", icon: Briefcase, available: true },
+  { id: "friendly", name: "Friendly", description: "Warm, approachable, and conversational", icon: MessageSquare, available: false },
+  { id: "technical", name: "Technical", description: "Detailed, precise, and informative", icon: Star, available: false },
+  { id: "custom", name: "Custom", description: "Define your own unique personality", icon: AlertCircle, available: false },
 ];
+
 export default function ChatbotSetupStep2() {
   const dispatch = useDispatch();
   const { selectedRole, description, systemPrompt } = useSelector((state: any) => state.customChatbot);
   const [selectedPersonality, setSelectedPersonality] = useState("professional");
-  // const [systemPrompt, setSystemPrompt] = useState(promptTemplates[0].content);
   const [selectedTemplate, setSelectedTemplate] = useState("Customer Care Assistant");
   const { data: user } = useGetUserQuery();
-
-  console.log(user);
 
   const handleTemplateSelect = (template: typeof promptTemplates[0]) => {
     dispatch(setSystemPrompt(template.content));
     setSelectedTemplate(template.name);
-    // console.log(template.content)
-    // Clear error when user selects a template
   };
 
+  const handlePersonalitySelect = (personalityId: string) => {
+    if (personalityOptions.find(p => p.id === personalityId)?.available) {
+      setSelectedPersonality(personalityId);
+    }
+  };
 
   useEffect(() => {
     dispatch(setSelectedRole(promptTemplates[0].name));
     dispatch(setSystemPrompt(promptTemplates[0].content));
-  }, []);
+  }, [dispatch]);
 
   const handleInputChange = (field: string, value: string) => {
-
     switch (field) {
       case 'systemPrompt':
         dispatch(setSystemPrompt(value));
-
         break;
     }
   };
@@ -77,78 +78,182 @@ export default function ChatbotSetupStep2() {
     } else {
       dispatch(setSteps(3));
     }
-  }
+  };
 
   return (
-    <div className=" mx-auto w-full p-8 bg-white rounded-2xl shadow-lg border border-gray-100 flex flex-col min-h-[calc(100vh-8rem)]">
+    <div className="bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
+      <div className="">
+      
+        {/* Main Form Card */}
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
+          {/* Header */}
+          <div className="mb-8">
+            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+              Bot Role
+            </h2>
+            <p className="text-gray-600 dark:text-gray-400 text-lg">
+              Choose how your bot should interact and behave
+            </p>
+          </div>
 
-      <div>
-        <label className="block text-sm font-medium text-gray-700 mb-3">Choose Bot Personality:</label>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-          {personalityOptions.map(personality => (
-            <label
-              key={personality.id}
-              className={`flex items-center p-4 border-2 rounded-lg cursor-pointer transition-all ${selectedPersonality === personality.id
-                ? 'border-indigo-500 bg-indigo-50'
-                : 'border-gray-200 hover:border-gray-300'
-                }`}
-            >
-              <input
-                type="radio"
-                name="personality"
-                value={personality.id}
-                checked={selectedPersonality === personality.id}
-                onChange={(e) => setSelectedPersonality(e.target.value)}
-                className="mr-3"
-                disabled={personality.id !== "professional"}
-              />
-              <div>
-                <div className="font-medium text-gray-900">{personality.name}</div>
-                <div className="text-sm text-gray-600">{personality.description}</div>
-              </div>
+          {/* Personality Selection Cards */}
+          {/* <div className="mb-8">
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+              Select Personality Type:
             </label>
-          ))}
-        </div>
-      </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {personalityOptions.map(personality => {
+                const IconComponent = personality.icon;
+                const isSelected = selectedPersonality === personality.id;
+                const isAvailable = personality.available;
+                
+                return (
+                  <div
+                    key={personality.id}
+                    onClick={() => handlePersonalitySelect(personality.id)}
+                    className={`relative p-6 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                      isSelected
+                        ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20 ring-2 ring-indigo-500/20'
+                        : isAvailable
+                        ? 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:shadow-lg hover:scale-105'
+                        : 'border-gray-200 dark:border-gray-600 bg-gray-50 dark:bg-gray-700/50 cursor-not-allowed opacity-60'
+                    }`}
+                  >
+              
+                    {isSelected && (
+                      <div className="absolute top-3 right-3 w-6 h-6 bg-indigo-500 rounded-full flex items-center justify-center">
+                        <Check className="w-4 h-4 text-white" />
+                      </div>
+                    )}
+                    
+                 
+                    <div className="flex justify-center mb-4">
+                      <IconComponent className={`w-8 h-8 ${
+                        isSelected ? 'text-indigo-600' : 'text-gray-500 dark:text-gray-400'
+                      }`} />
+                    </div>
+                    
+                 
+                    <div className="text-center">
+                      <h3 className={`font-semibold text-lg mb-2 ${
+                        isSelected ? 'text-indigo-900 dark:text-indigo-100' : 'text-gray-900 dark:text-white'
+                      }`}>
+                        {personality.name}
+                      </h3>
+                      <p className={`text-sm ${
+                        isSelected ? 'text-indigo-700 dark:text-indigo-200' : 'text-gray-600 dark:text-gray-400'
+                      }`}>
+                        {personality.description}
+                      </p>
+                    </div>
+                    
+                  
+                  </div>
+                );
+              })}
+            </div>
+          </div> */}
 
-      {/* System Prompt */}
-      <div className="mt-8">
-        <div className="flex  items-center justify-between mb-2">
-          <label className="block text-sm font-medium text-gray-700">
-            System Prompt: <span className="text-red-500">*</span>
-          </label>
-          <div className="w-56">
-            <Select value={selectedTemplate} onValueChange={val => {
-              const template = promptTemplates.find(t => t.name === val);
-              if (template) handleTemplateSelect(template);
-              dispatch(setSelectedRole(val))
-              dispatch(setSystemPrompt(template?.content))
-            }}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Customer Support" />
-              </SelectTrigger>
-              <SelectContent>
-                {promptTemplates.map(template => (
-                  <SelectItem key={template.name} value={template.name} disabled={template.name === selectedTemplate}>
-                    {template.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+          {/* System Prompt Section */}
+          <div className="mb-8">
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
+                System Prompt Template <span className="text-red-500">*</span>
+              </label>
+              
+              {/* Template Selection Cards */}
+              <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-6">
+                {promptTemplates.map(template => {
+                  const isSelected = selectedTemplate === template.name;
+                  return (
+                    <div
+                      key={template.name}
+                      onClick={() => {
+                        handleTemplateSelect(template);
+                        dispatch(setSelectedRole(template.name));
+                      }}
+                      className={`relative hover:scale-105 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
+                        isSelected
+                          ? 'border-transparent bg-gradient-to-r text-white from-blue-500 to-indigo-600 bg-clip-border shadow-lg'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                      }`}
+                    >
+                      {/* Selected State Overlay */}
+                      {isSelected && (
+                        <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-600/10 rounded-xl" />
+                      )}
+                      
+                      {/* Checkmark Badge */}
+                      {isSelected && (
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
+                          <Check className="w-3 h-3 text-white" />
+                        </div>
+                      )}
+                      
+                      {/* Card Content */}
+                      <div className="relative z-10">
+                        <h3 className={`font-semibold text-base mb-2 ${
+                          isSelected ? 'text-white dark:text-blue-100' : 'text-gray-900 dark:text-white'
+                        }`}>
+                          {template.name}
+                        </h3>
+                        <p className={`text-xs ${
+                          isSelected ? 'text-white dark:text-blue-200' : 'text-gray-600 dark:text-gray-400'
+                        }`}>
+                          {template.name === "Customer Care Assistant" 
+                            ? "Professional customer support with empathy and solutions"
+                            : "Medical guidance and support for fertility treatments"
+                          }
+                        </p>
+                      </div>
+                      
+                      {/* Hover Effects */}
+                      <div className={`absolute inset-0 rounded-xl transition-all duration-200 ${
+                        isSelected 
+                          ? 'shadow-lg' 
+                          : 'hover:shadow-md hover:scale-105'
+                      }`} />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            
+            {/* System Prompt Textarea */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                Customize System Prompt:
+              </label>
+              <textarea
+                value={systemPrompt}
+                onChange={(e) => handleInputChange('systemPrompt', e.target.value)}
+                placeholder="You are a helpful customer support assistant..."
+                rows={8}
+                className="w-full border border-gray-200 dark:border-gray-600 rounded-xl p-4 text-sm font-mono resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all duration-300 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white hover:bg-gray-100 dark:hover:bg-gray-600"
+              />
+            </div>
+          </div>
+
+          {/* Navigation Buttons */}
+          <div className="flex justify-between items-center gap-4 pt-6 border-t border-gray-100 dark:border-gray-700/50">
+            <Button 
+              onClick={() => dispatch(setSteps(1))}
+              variant="ghost"
+              className="px-6 py-3 rounded-xl border-gray-200 border text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
+            >
+              <ChevronLeft className="w-4 h-4" />
+              Back
+            </Button> 
+            
+            <Button 
+              onClick={goToNextStep}
+              className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-5 w-26 rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
+            >
+              <span>Next</span>
+              <ChevronRight className="h-5 w-5" />
+            </Button>
           </div>
         </div>
-        <textarea
-          value={systemPrompt}
-          onChange={(e) => handleInputChange('systemPrompt', e.target.value)}
-          placeholder="You are a helpful customer support assistant..."
-          rows={8}
-          className={`w-full border rounded-md p-3 text-sm font-mono resize-none focus:outline-none focus:ring-2`}
-        />
-
-      </div>
-      <div className="mt-auto self-end">
-        <Button className="mr-2 bg-gray-700 text-white" onClick={() => dispatch(setSteps(1))}>Back</Button>
-        <Button onClick={goToNextStep}>Next</Button>
       </div>
     </div>
   );

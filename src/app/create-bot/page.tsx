@@ -16,22 +16,29 @@ import ChatbotSetupStep1 from "@/components/chatbotSteps/ChatbotSetupStep1";
 import { useDispatch, useSelector } from "react-redux";
 import ChatbotSetupStep3 from "@/components/chatbotSteps/ChatbotSetupStep3";
 import PreviewBot from "@/components/chatbotSteps/PreviewBot";
-
+import ProgressSteps from "@/components/ProgressSteps";
+const steps2 = [
+    { id: 1, label: "Bot Details" },
+    { id: 2, label: "Bot Role" },
+    { id: 3, label: "Knowledge Base" },
+    { id: 4, label: "Preview" },
+];
 const CustomPage = () => {
     // const [steps, setSteps] = useState<number>(1);
 
-    const { selectedRole, description, botName, botAvatar,steps,color } = useSelector((state: any) => state.customChatbot);
+    const { selectedRole, description, botName, botAvatar, steps, color } = useSelector((state: any) => state.customChatbot);
     const dispatch = useDispatch();
 
 
     return (
         <Layout>
+            <ProgressSteps steps={steps2} currentStep={steps} />
             <div className="grid grid-cols-1 md:grid-cols-[5fr_2fr] 2xl:grid-cols-[10fr_2fr]  mx-auto  gap-6  justify-between gap- items-cente h-full">
-                    {steps === 1 && <ChatbotSetupStep1 />}
-                    {steps === 2 && <ChatbotSetupStep2 />}
-                    {steps === 3 && <ChatbotSetupStep3 />}
-                    {steps === 4 && <PreviewBot />}
-                <div className="lg:h-[35rem] h-[25rem] w-[22rem]">
+                {steps === 1 && <ChatbotSetupStep1 />}
+                {steps === 2 && <ChatbotSetupStep2 />}
+                {steps === 3 && <ChatbotSetupStep3 />}
+                {steps === 4 && <PreviewBot />}
+                <div className="lg:h-[35rem] h-[25rem] w-[22rem] sticky top-0 max-h-[calc(100vh-200px)]">
                     {/* Chat Interface */}
                     <div
                         className={`transition-all h-full duration-300 ease-in-out`}
@@ -70,7 +77,7 @@ const CustomPage = () => {
                                         className={`px-4 py-2 rounded-2xl max-w-[80%] text-sm ${"bg-blue-100 "
                                             }`}
                                     >
-                                       Hi! I’m {botName}, your virtual assistant. How can I make your day easier?
+                                        Hi! I’m {botName}, your virtual assistant. How can I make your day easier?
                                     </div>
 
 
