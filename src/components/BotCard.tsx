@@ -2,17 +2,20 @@
 import { Copy, Loader2, Check, Play, Edit, Trash2, Bot } from "lucide-react"
 import { Button } from "./ui/button"
 import { BotResponse, useDeleteBotMutation, useGetBotsQuery } from "@/store/api/botsApi";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { setBotName, setBotAvatar, setBotColor, setDomain, setSystemPrompt, setAvatarId, setSteps, setDescription, setSelectedRole } from "@/store/slices/customChatbotSlice";
+import { setBotName, setBotAvatar, setBotColor, setDomain, setSystemPrompt, setAvatarId, setSteps, setDescription, setSelectedRole, resetCustomChatbot, setIsEditing, setEditBotId } from "@/store/slices/customChatbotSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
 
 const BotCard = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [isBotLoading, setIsBotLoading] = useState<string | null>(null); // Track which bot is loading
+  const [loadedBotId, setLoadedBotId] = useState<string | null>(null); // Track which bot script is currently loaded
   const { data: bots, isLoading, refetch } = useGetBotsQuery();
   const [deleteBot, { isLoading: isDeleting }] = useDeleteBotMutation();
+  const [testedBotId, setTestedBotId] = useState<string | null>(null);
+
   const dispatch = useDispatch();
   const router = useRouter();
   const handleCopy = async (id: string, url: string) => {
@@ -24,6 +27,24 @@ const BotCard = () => {
       console.error('Failed to copy:', err);
     }
   };
+
+  const removeChatbotScript = () => {
+    // Remove the chatbot script if it exists
+    const existingScript = document.querySelector(
+      `iframe[id="chatbot-widget-iframe"]`
+    );
+   
+    if (existingScript) {
+      existingScript.remove();
+      setLoadedBotId(null);
+    }
+  };
+
+  useEffect(()=>{
+    return () => {
+      removeChatbotScript();
+    };
+  },[])
 
   const handleTest = async (bot: any) => {
     setIsBotLoading(bot._id); // Set loading state for specific bot
@@ -43,8 +64,12 @@ const BotCard = () => {
       script.setAttribute("data-bot-id", `${bot._id}`);
       document.body.appendChild(script);
       
+      // Track which bot script is currently loaded
+      setLoadedBotId(bot._id);
+      
       // Simulate some loading time for better UX
       await new Promise(resolve => setTimeout(resolve, 1500));
+      setTestedBotId(bot._id);
       
     } catch (error) {
       console.error('Error testing bot:', error);
@@ -52,6 +77,9 @@ const BotCard = () => {
       setIsBotLoading(null); // Clear loading state
     }
   };
+
+
+  
 
   const handleEdit = (bot: BotResponse) => {
     dispatch(setBotName(bot.name));
@@ -61,6 +89,8 @@ const BotCard = () => {
     dispatch(setSystemPrompt(bot.systemPrompt));
     dispatch(setSelectedRole(bot.botRole));
     dispatch(setSteps(1));
+    dispatch(setIsEditing(true));
+    dispatch(setEditBotId(bot._id));
     router.push("/create-bot");
   }
 
@@ -91,6 +121,8 @@ const BotCard = () => {
     try {
       await deleteBot(bot._id);
       toast.success('Bot deleted successfully');
+      removeChatbotScript();
+      dispatch(resetCustomChatbot());
       // Refetch the bot list to update the UI
       refetch();
     } catch (error) {
@@ -136,7 +168,7 @@ const BotCard = () => {
                     onClick={() => handleTest(bot)} 
                     size="sm" 
                     className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-4 min-w-20 rounded-lg transition-all duration-200 hover:scale-105 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
-                    disabled={isBotLoading === bot._id}
+                    disabled={isBotLoading === bot._id || testedBotId === bot._id}
                   >
                     {isBotLoading === bot._id ? (
                       <Loader2 className="h-4 w-4 animate-spin mr-2" />
@@ -146,15 +178,14 @@ const BotCard = () => {
                     {isBotLoading === bot._id ? "Loading..." : "Test"}
                   </Button>
                 )}
-                
+              
                 <Button 
                   size="sm" 
                   variant="outline" 
                   onClick={()=>handleEdit(bot)}
-                  disabled 
-                  className="px-4 py-2 rounded-lg border-gray-200 dark:border-gray-600 text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50"
+                  className="px-4 py-2 rounded-lg border-gray-200 dark:border-gray-600 text-gray-900 hover:bg-gray-200 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50"
                 >
-                  <Edit className="h-4 w-4" />
+                  <Edit className="h-4 w-4 mr-2" />
                   Edit
                 </Button>
                 

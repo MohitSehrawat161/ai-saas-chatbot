@@ -22,7 +22,7 @@ const presetColors = [
 
 export default function ChatbotSetupStep1() {
   const dispatch = useDispatch();
-  const { botName, botAvatar, color, description, domain } = useSelector((state: any) => state.customChatbot);
+  const { botName, avatarId,botAvatar, color, description, domain, isEditing } = useSelector((state: any) => state.customChatbot);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<any>(null);
   const [validationErrors, setValidationErrors] = useState<{ description: boolean; domain: boolean }>({ description: false, domain: false });
@@ -40,11 +40,15 @@ export default function ChatbotSetupStep1() {
   };
 
   useEffect(() => {
-    if (avatars?.avatars?.[0]) {
+    if (avatars?.avatars?.[0] && !isEditing) {
       dispatch(setBotAvatar(avatars.avatars[0].avatarUrl));
       dispatch(setAvatarId(avatars.avatars[0]._id));
       dispatch(setBotName(avatars.avatars[0].avatarName));
       setSelectedAvatar(avatars.avatars[0]._id);
+      
+    }
+    if(isEditing){
+      setSelectedAvatar(avatarId);
     }
   }, [avatars, dispatch]);
 

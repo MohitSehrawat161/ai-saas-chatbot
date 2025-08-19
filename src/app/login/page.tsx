@@ -30,6 +30,7 @@ export default function LoginPage() {
       console.log(response);
       toast.success("Login successful");
       Cookies.set("token", response.accessToken);
+      
       router.push("/dashboard");
     } catch (error: any) {
       if (error.data.error) {

@@ -43,7 +43,7 @@ const personalityOptions = [
 
 export default function ChatbotSetupStep2() {
   const dispatch = useDispatch();
-  const { selectedRole, description, systemPrompt } = useSelector((state: any) => state.customChatbot);
+  const { selectedRole, description, systemPrompt, isEditing } = useSelector((state: any) => state.customChatbot);
   const [selectedPersonality, setSelectedPersonality] = useState("professional");
   const [selectedTemplate, setSelectedTemplate] = useState("Customer Care Assistant");
   const { data: user } = useGetUserQuery();
@@ -60,8 +60,10 @@ export default function ChatbotSetupStep2() {
   };
 
   useEffect(() => {
-    dispatch(setSelectedRole(promptTemplates[0].name));
-    dispatch(setSystemPrompt(promptTemplates[0].content));
+    if (!isEditing) {
+      dispatch(setSelectedRole(promptTemplates[0].name));
+      dispatch(setSystemPrompt(promptTemplates[0].content));
+    }
   }, [dispatch]);
 
   const handleInputChange = (field: string, value: string) => {
@@ -83,7 +85,7 @@ export default function ChatbotSetupStep2() {
   return (
     <div className="bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
       <div className="">
-      
+
         {/* Main Form Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
           {/* Header */}
@@ -160,11 +162,11 @@ export default function ChatbotSetupStep2() {
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-4">
                 System Prompt Template <span className="text-red-500">*</span>
               </label>
-              
+
               {/* Template Selection Cards */}
               <div className="grid grid-cols-1  md:grid-cols-2 gap-4 mb-6">
                 {promptTemplates.map(template => {
-                  const isSelected = selectedTemplate === template.name;
+                  const isSelected = selectedRole === template.name;
                   return (
                     <div
                       key={template.name}
@@ -172,53 +174,49 @@ export default function ChatbotSetupStep2() {
                         handleTemplateSelect(template);
                         dispatch(setSelectedRole(template.name));
                       }}
-                      className={`relative hover:scale-105 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${
-                        isSelected
+                      className={`relative hover:scale-105 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${isSelected
                           ? 'border-transparent bg-gradient-to-r text-white from-blue-500 to-indigo-600 bg-clip-border shadow-lg'
                           : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                      }`}
+                        }`}
                     >
                       {/* Selected State Overlay */}
                       {isSelected && (
                         <div className="absolute inset-0 bg-gradient-to-r from-blue-500/10 to-indigo-600/10 rounded-xl" />
                       )}
-                      
+
                       {/* Checkmark Badge */}
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-5 h-5 bg-gradient-to-r from-blue-500 to-indigo-600 rounded-full flex items-center justify-center">
                           <Check className="w-3 h-3 text-white" />
                         </div>
                       )}
-                      
+
                       {/* Card Content */}
                       <div className="relative z-10">
-                        <h3 className={`font-semibold text-base mb-2 ${
-                          isSelected ? 'text-white dark:text-blue-100' : 'text-gray-900 dark:text-white'
-                        }`}>
+                        <h3 className={`font-semibold text-base mb-2 ${isSelected ? 'text-white dark:text-blue-100' : 'text-gray-900 dark:text-white'
+                          }`}>
                           {template.name}
                         </h3>
-                        <p className={`text-xs ${
-                          isSelected ? 'text-white dark:text-blue-200' : 'text-gray-600 dark:text-gray-400'
-                        }`}>
-                          {template.name === "Customer Care Assistant" 
+                        <p className={`text-xs ${isSelected ? 'text-white dark:text-blue-200' : 'text-gray-600 dark:text-gray-400'
+                          }`}>
+                          {template.name === "Customer Care Assistant"
                             ? "Professional customer support with empathy and solutions"
                             : "Medical guidance and support for fertility treatments"
                           }
                         </p>
                       </div>
-                      
+
                       {/* Hover Effects */}
-                      <div className={`absolute inset-0 rounded-xl transition-all duration-200 ${
-                        isSelected 
-                          ? 'shadow-lg' 
+                      <div className={`absolute inset-0 rounded-xl transition-all duration-200 ${isSelected
+                          ? 'shadow-lg'
                           : 'hover:shadow-md hover:scale-105'
-                      }`} />
+                        }`} />
                     </div>
                   );
                 })}
               </div>
             </div>
-            
+
             {/* System Prompt Textarea */}
             <div className="mb-6">
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
@@ -236,16 +234,16 @@ export default function ChatbotSetupStep2() {
 
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center gap-4 pt-6 border-t border-gray-100 dark:border-gray-700/50">
-            <Button 
+            <Button
               onClick={() => dispatch(setSteps(1))}
               variant="ghost"
               className="px-6 py-3 rounded-xl border-gray-200 border text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-all duration-200"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
-            </Button> 
-            
-            <Button 
+            </Button>
+
+            <Button
               onClick={goToNextStep}
               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-5 w-26 rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg hover:shadow-xl"
             >

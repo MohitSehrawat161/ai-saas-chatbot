@@ -38,9 +38,11 @@ export interface CreateBotData {
 export interface UpdateBotData {
   name?: string;
   description?: string;
-  type?: string;
-  status?: 'active' | 'inactive' | 'training';
-  model?: string;
+  domain?: string;
+  systemPrompt?: string;
+  avatarId?: string;
+  themeColor?: string;
+  botRole?: string;
 }
 
 export interface BotStats {
@@ -137,6 +139,13 @@ export const botsApi = baseApi.injectEndpoints({
         method: 'DELETE',
       }),
     }),
+    updateBot: builder.mutation<any, { id: string, data: UpdateBotData }>({
+      query: ({ id, data }) => ({
+        url: `/chatbots/${id}`,
+        method: 'PUT',
+        data,
+      }),
+    }),
   }),
 
 });
@@ -149,6 +158,7 @@ export const {
   useGetAvatarsQuery,
   useGetUserQuery,
   useSignUpMutation,
-  useDeleteBotMutation
+  useDeleteBotMutation,
+  useUpdateBotMutation
 } = botsApi;
 

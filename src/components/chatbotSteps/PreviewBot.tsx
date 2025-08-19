@@ -7,7 +7,7 @@ import { Button } from "../ui/button";
 import { setSteps, resetCustomChatbot } from "@/store/slices/customChatbotSlice";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { useCreateBotMutation, useGetUserQuery } from "@/store/api/botsApi";
+import { useCreateBotMutation, useGetUserQuery, useUpdateBotMutation } from "@/store/api/botsApi";
 import { useRouter } from "next/navigation";
 
 const PreviewBot = () => {
@@ -29,10 +29,13 @@ const PreviewBot = () => {
         personality,
         selectedRole,
         avatarId,
+        editBotId,
+        isEditing,
     } = useSelector((state: any) => state.customChatbot);
 
     const { planType } = useSelector((state: any) => state.user);
     const [createBot, { isLoading }] = useCreateBotMutation();
+    const [updateBot, { isLoading: isUpdatingBot }] = useUpdateBotMutation();
     const [isCreatingBot, setIsCreatingBot] = useState(false);
 
     const handleNext = async () => {
@@ -83,6 +86,35 @@ const PreviewBot = () => {
             dispatch(setSteps(2));
         } else {
             dispatch(setSteps(3));
+        }
+    }
+
+    const handleUpdateChatbot = async () => {
+        try {
+            const response = await updateBot({
+                id: editBotId,
+                data: {
+                    name: botName,
+                    domain: domain,
+                    systemPrompt: systemPrompt,
+                    description: description,
+                    avatarId: avatarId,
+                    themeColor: color,
+                    botRole: selectedRole,
+                   
+                }
+            }).unwrap();
+            console.log(response);
+            toast.success("Chatbot updated successfully");
+            dispatch(resetCustomChatbot());
+            dispatch(setSteps(1));
+            router.push("/my-bots");
+        }
+        catch (error: any) {
+            console.log(error);
+            if (error.data.error) {
+                toast.error(error.data.error);
+            }
         }
     }
 
@@ -212,7 +244,7 @@ const PreviewBot = () => {
                             Back
                         </Button>
 
-                        <Button
+                      {  !isEditing ? <Button
                             className="w-48 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
 
                             onClick={handleNext}
@@ -230,6 +262,25 @@ const PreviewBot = () => {
                                 </div>
                             )}
                         </Button>
+                        :
+                        <Button
+                            className="w-48 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
+                            onClick={handleUpdateChatbot}
+                            disabled={isUpdatingBot || isLoading}
+                        >
+                            {isUpdatingBot || isLoading ? (
+                                <div className="flex items-center gap-2">
+                                    <Loader className="animate-spin w-5 h-5" />
+                                    <span>Updating...</span>
+                                </div>
+                            ) : (
+                                <div className="flex items-center gap-2">
+                                    <span>Update Chatbot</span>
+                                    <ChevronRight className="w-5 h-5" />
+                                </div>
+                            )}
+                        </Button>
+                        }
                     </div>
                 </div>
             </div>

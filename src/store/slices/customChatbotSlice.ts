@@ -13,6 +13,7 @@ const initialState = {
   personality: "",
   avatarId: "689dcaabe3cdec2f857f044d",
   isEditing: false,
+  editBotId: "",
 };
 
 const customChatbotSlice = createSlice({
@@ -46,6 +47,12 @@ const customChatbotSlice = createSlice({
     setAvatarId: (state, action) => {
       state.avatarId = action.payload;
     },
+    setIsEditing: (state, action) => {
+      state.isEditing = action.payload;
+    },
+    setEditBotId: (state, action) => {
+      state.editBotId = action.payload;
+    },
     resetCustomChatbot: (state) => {
       state.selectedRole = "Customer Care Assistant";
       state.description = "";
@@ -73,5 +80,7 @@ export const {
   setDomain,
   setSystemPrompt,
   setAvatarId,
+  setIsEditing,
+  setEditBotId,
   resetCustomChatbot } = customChatbotSlice.actions;
 export default customChatbotSlice.reducer;

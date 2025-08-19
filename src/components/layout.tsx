@@ -32,6 +32,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
+import { useGetUserQuery } from "@/store/api/botsApi";
 
 interface LayoutProps {
   children: ReactNode;
@@ -94,7 +95,7 @@ function Avatar({ name }: { name: string }) {
 function TopBar({ title }: { title?: string }) {
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
-
+  const { data: user } = useGetUserQuery();
   return (
     <header
       className={`flex items-center justify-between px-6 py-4 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm shadow-sm border-b border-gray-100 dark:border-gray-700/50 fixed top-0 z-20 transition-all duration-300 ${
@@ -110,9 +111,7 @@ function TopBar({ title }: { title?: string }) {
       
       <div className="flex items-center gap-4 cursor-pointer">
         {/* Search Icon */}
-      
-        
-        <Avatar name="John Doe" />
+        <Avatar name={user?.username || ""} />
       </div>
     </header>
   );
