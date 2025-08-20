@@ -1,22 +1,15 @@
 'use client'
 import { Send, X } from "lucide-react";
 import Layout from "@/components/layout";
-import { useState } from "react";
-import {
-    MessageSquare,
-    Briefcase,
-    Star,
-    Calendar,
-    Headphones,
-    ShoppingBag,
-} from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useEffect, useState } from "react";
+
 import ChatbotSetupStep2 from "@/components/chatbotSteps/ChatbotSetupStep2";
 import ChatbotSetupStep1 from "@/components/chatbotSteps/ChatbotSetupStep1";
 import { useDispatch, useSelector } from "react-redux";
 import ChatbotSetupStep3 from "@/components/chatbotSteps/ChatbotSetupStep3";
 import PreviewBot from "@/components/chatbotSteps/PreviewBot";
 import ProgressSteps from "@/components/ProgressSteps";
+import { resetCustomChatbot, setIsEditing } from "@/store/slices/customChatbotSlice";
 const steps2 = [
     { id: 1, label: "Bot Details" },
     { id: 2, label: "Bot Role" },
@@ -29,7 +22,14 @@ const CustomPage = () => {
     const { selectedRole, description, botName, botAvatar, steps, color } = useSelector((state: any) => state.customChatbot);
     const dispatch = useDispatch();
 
+    useEffect(() => {
+        return ()=>{
+            dispatch(setIsEditing(false));
+            dispatch(resetCustomChatbot());
+        }
+    }, []);
 
+ 
     return (
         <Layout>
             <ProgressSteps steps={steps2} currentStep={steps} />
@@ -109,7 +109,8 @@ const CustomPage = () => {
                                     </button>
                                 </form>
                             </div>
-                            <p className="bg-[#f1f1f1] text-center p-2 text-xs text-[#00043b] font-thin">Powered by <strong className="font-bold">Binary Informatics</strong></p>
+                            <p className="bg-[#f1f1f1] text-center p-2 text-xs text-[#00043b] font-thin">
+                                Powered by <strong className="font-bold">Binary Informatics</strong></p>
                         </div>
                     </div>
 
