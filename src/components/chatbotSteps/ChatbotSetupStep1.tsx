@@ -3,7 +3,7 @@
 import { useState, ChangeEvent, useEffect } from "react";
 import { Loader, Upload, Check, ChevronRight } from "lucide-react";
 import { useDispatch, useSelector } from "react-redux";
-import { setBotName, setBotAvatar, setSteps, setBotColor, setDescription, setDomain, setAvatarId } from "@/store/slices/customChatbotSlice";
+import { setBotName, setBotAvatar, setSteps, setBotColor, setDescription, setDomain, setAvatarId, setIsEditing, resetCustomChatbot } from "@/store/slices/customChatbotSlice";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
 import ColorPicker from "../ColorPicker";
@@ -22,7 +22,7 @@ const presetColors = [
 
 export default function ChatbotSetupStep1() {
   const dispatch = useDispatch();
-  const { botName, avatarId,botAvatar, color, description, domain, isEditing } = useSelector((state: any) => state.customChatbot);
+  const { botName, avatarId, botAvatar, color, description, domain, isEditing } = useSelector((state: any) => state.customChatbot);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [selectedAvatar, setSelectedAvatar] = useState<any>(null);
   const [validationErrors, setValidationErrors] = useState<{ description: boolean; domain: boolean }>({ description: false, domain: false });
@@ -38,6 +38,7 @@ export default function ChatbotSetupStep1() {
       dispatch(setBotAvatar(previewURL));
     }
   };
+  console.log(avatarId);
 
   useEffect(() => {
     if (avatars?.avatars?.[0] && !isEditing) {
@@ -45,12 +46,15 @@ export default function ChatbotSetupStep1() {
       dispatch(setAvatarId(avatars.avatars[0]._id));
       dispatch(setBotName(avatars.avatars[0].avatarName));
       setSelectedAvatar(avatars.avatars[0]._id);
-      
+
     }
-    if(isEditing){
+    if (isEditing) {
       setSelectedAvatar(avatarId);
     }
+   
   }, [avatars, dispatch]);
+
+ 
 
   const handleColorChange = (colorValue: string) => {
     dispatch(setBotColor(colorValue));
@@ -63,14 +67,11 @@ export default function ChatbotSetupStep1() {
   const gotoNextStep = () => {
     // Clear previous validation errors
     clearValidationErrors();
-    
+
     let hasErrors = false;
     const newValidationErrors = { description: false, domain: false };
 
-    if (!description?.trim()) {
-      newValidationErrors.description = true;
-      hasErrors = true;
-    }
+    
     if (!domain?.trim()) {
       newValidationErrors.domain = true;
       hasErrors = true;
@@ -129,7 +130,7 @@ export default function ChatbotSetupStep1() {
 
 
           {/* Bot Description */}
-          <div className="mb-3">
+          {/* <div className="mb-3">
             <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
               Bot Description <span className="text-red-500">*</span>
             </label>
@@ -140,7 +141,7 @@ export default function ChatbotSetupStep1() {
               rows={3}
               className={`w-full border ${validationErrors.description ? 'border-red-500' : 'border-gray-200 dark:border-gray-600'} rounded-lg p-3 text-sm resize-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all duration-200 shadow-sm bg-white dark:bg-gray-700 text-gray-900 dark:text-white`}
             />
-          </div>
+          </div> */}
 
           {/* Domain */}
           <div className="mb-3">
@@ -184,7 +185,7 @@ export default function ChatbotSetupStep1() {
                   className="w-12 h-12 cursor-pointer rounded-full border-2 transition-all duration-200 hover:scale-110 mb-2"
                   style={{ backgroundColor: color }}
                 ></label>
-  
+
                 <input
                   onChange={(e) => handleColorChange(e.target.value)}
                   type="color"
@@ -212,8 +213,8 @@ export default function ChatbotSetupStep1() {
                     <button
                       onClick={() => setAvatar(avatar._id, avatar.avatarUrl, avatar.avatarName)}
                       className={`group cursor-pointer relative w-20 h-20 rounded-full overflow-hidden transition-all duration-200 hover:scale-110 ${selectedAvatar === avatar._id
-                          ? 'ring-4 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-800'
-                          : 'ring-2 ring-gray-200 dark:ring-gray-600 hover:ring-gray-300'
+                        ? 'ring-4 ring-indigo-500 ring-offset-2 ring-offset-white dark:ring-offset-gray-800'
+                        : 'ring-2 ring-gray-200 dark:ring-gray-600 hover:ring-gray-300'
                         }`}
                     >
                       <img
@@ -242,15 +243,15 @@ export default function ChatbotSetupStep1() {
           {/* Next Button */}
           <div className="flex justify-end">
 
-          <Button
-            onClick={gotoNextStep}
-            disabled={isLoading}
-            className=" bg-gradient-to-r flex items-center justify-center  from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-5 w-26  rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
+            <Button
+              onClick={gotoNextStep}
+              disabled={isLoading}
+              className=" bg-gradient-to-r flex items-center justify-center  from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white p-5 w-26  rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
             >
-            <span>Next</span>
-            <ChevronRight className=" h-5 w-5" />
-          </Button>
-            </div>
+              <span>Next</span>
+              <ChevronRight className=" h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </div>
     </div>

@@ -82,8 +82,10 @@ const BotCard = () => {
   
 
   const handleEdit = (bot: BotResponse) => {
+    console.log(bot.avatarId);
     dispatch(setBotName(bot.name));
     dispatch(setBotAvatar(bot.botAvatar));
+    dispatch(setAvatarId(bot.avatarId));
     dispatch(setBotColor(bot.themeColor));
     dispatch(setDomain(bot.domain));
     dispatch(setSystemPrompt(bot.systemPrompt));

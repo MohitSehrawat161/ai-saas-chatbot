@@ -5,6 +5,7 @@ export interface BotResponse {
   _id: string;
   botAvatar: string;
   botRole: string;
+  avatarId: string;
   createdAt: string; // ISO date string, could also be Date if you want to parse it
   deployUrl: string;
   domain: string;
@@ -145,6 +146,7 @@ export const botsApi = baseApi.injectEndpoints({
         method: 'PUT',
         data,
       }),
+      invalidatesTags: [{ type: 'Bot', id: 'LIST' }],
     }),
   }),
 
