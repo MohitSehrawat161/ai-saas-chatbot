@@ -38,7 +38,7 @@ Perfect for customer support, sales assistance, FAQ handling, and more!
 
 ### 2. Access Chatbot Creation
 
-1. From your dashboard, click **"Create Bot"** or navigate to `/create-bot`
+1. From your dashboard, click **"Create Bot"** or navigate to `/create-chatbot`
 2. You'll be taken to the chatbot setup wizard with 4 simple steps
 
 ---

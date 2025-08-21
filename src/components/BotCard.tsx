@@ -1,5 +1,5 @@
 'use client'
-import { Copy, Loader2, Check, Play, Edit, Trash2, Bot } from "lucide-react"
+import { Copy, Loader2, Check, Play, Edit, Trash2, Bot, AlertTriangle } from "lucide-react"
 import { Button } from "./ui/button"
 import { BotResponse, useDeleteBotMutation, useGetBotsQuery } from "@/store/api/botsApi";
 import { useEffect, useState } from "react";
@@ -7,6 +7,15 @@ import { toast } from "react-hot-toast";
 import { setBotName, setBotAvatar, setBotColor, setDomain, setSystemPrompt, setAvatarId, setSteps, setDescription, setSelectedRole, resetCustomChatbot, setIsEditing, setEditBotId } from "@/store/slices/customChatbotSlice";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/navigation";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "./ui/dialog";
 
 const BotCard = () => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
@@ -15,6 +24,8 @@ const BotCard = () => {
   const { data: bots, isLoading, refetch } = useGetBotsQuery();
   const [deleteBot, { isLoading: isDeleting }] = useDeleteBotMutation();
   const [testedBotId, setTestedBotId] = useState<string | null>(null);
+  const [botToDelete, setBotToDelete] = useState<BotResponse | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
   const dispatch = useDispatch();
   const router = useRouter();
@@ -93,7 +104,7 @@ const BotCard = () => {
     dispatch(setSteps(1));
     dispatch(setIsEditing(true));
     dispatch(setEditBotId(bot._id));
-    router.push("/create-bot");
+    router.push("/edit-chatbot");
   }
 
   if (isLoading) {
@@ -119,9 +130,16 @@ const BotCard = () => {
     );
   }
 
-  const handleDelete = async (bot: any) => {
+  const handleDeleteClick = (bot: BotResponse) => {
+    setBotToDelete(bot);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (!botToDelete) return;
+    
     try {
-      await deleteBot(bot._id);
+      await deleteBot(botToDelete._id);
       toast.success('Bot deleted successfully');
       removeChatbotScript();
       dispatch(resetCustomChatbot());
@@ -130,7 +148,15 @@ const BotCard = () => {
     } catch (error) {
       console.error('Error deleting bot:', error);
       toast.error('Failed to delete bot');
+    } finally {
+      setIsDeleteDialogOpen(false);
+      setBotToDelete(null);
     }
+  };
+
+  const handleDeleteCancel = () => {
+    setIsDeleteDialogOpen(false);
+    setBotToDelete(null);
   };
 
   return (
@@ -169,15 +195,15 @@ const BotCard = () => {
                   <Button 
                     onClick={() => handleTest(bot)} 
                     size="sm" 
-                    className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-4 min-w-20 rounded-lg transition-all duration-200 hover:scale-105 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
+                    className="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-4 min-w-20 rounded-lg transition-all duration-200 hover:scale-105 shadow-md disabled:opacity-70 disabled:cursor-not-allowed"
                     disabled={isBotLoading === bot._id || testedBotId === bot._id}
                   >
                     {isBotLoading === bot._id ? (
-                      <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                      <Loader2 className="h-4 w-4 animate-spin" />
                     ) : (
                       <Play className="h-2 w-2" />
                     )}
-                    {isBotLoading === bot._id ? "Loading..." : "Test"}
+                    {isBotLoading === bot._id ? "Loading Your Chatbot ..." : "Test Chatbot"}
                   </Button>
                 )}
               
@@ -185,21 +211,21 @@ const BotCard = () => {
                   size="sm" 
                   variant="outline" 
                   onClick={()=>handleEdit(bot)}
-                  className="px-4 py-2 rounded-lg border-gray-200 dark:border-gray-600 text-gray-900 hover:bg-gray-200 dark:text-gray-500 bg-gray-50 dark:bg-gray-700/50"
+                  className="px-4 py-2 rounded-lg hover:scale-105 transition-all duration-200 border-gray-200 bg-slate-100 hover:bg-slate-200 text-slate-800"
                 >
-                  <Edit className="h-4 w-4 mr-2" />
-                  Edit
+                  <Edit className="h-4 w-4" />
+                  Edit Chatbot
                 </Button>
                 
                 <Button 
-                onClick={()=>handleDelete(bot)}
+                onClick={()=>handleDeleteClick(bot)}
                   size="sm" 
                   variant="outline" 
                   disabled={isDeleting}
                   className="px-4 py-2 rounded-lg border-red-200 dark:border-gray-600 hover:bg-red-600 hover:scale-105 hover:text-white text-white bg-red-500 dark:bg-gray-700/50"
                 >
                   <Trash2 className="h-4 w-4" />
-                  {isDeleting ? "Deleting..." : "Delete"}
+                 Delete Chatbot
                 </Button>
               </div>
             </div>
@@ -234,8 +260,7 @@ const BotCard = () => {
                   <code className="text-sm text-emerald-400 font-mono bg-gray-800 dark:bg-gray-900 rounded-lg p-3 block overflow-x-auto">
                     {`<script 
   src="https://effulgent-salamander-1c5c60.netlify.app/chatbot-embed.js" 
-  data-bot-id="${bot._id}">
-</script>`}
+  data-bot-id="${bot._id}"></script>`}
                   </code>
                   
                   {/* Copy Success Message */}
@@ -262,7 +287,49 @@ const BotCard = () => {
           </div>
         </div>
       ))}
+
+       {/* Delete Confirmation Dialog */}
+    <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="flex items-center gap-2">
+            <AlertTriangle className="h-5 w-5 text-red-500" />
+            Delete Chatbot
+          </DialogTitle>
+          <DialogDescription>
+            Are you sure you want to delete <span className="font-semibold text-gray-900 dark:text-white">"{botToDelete?.name}" </span> Chatbot? 
+            This action cannot be undone and will permanently remove the chatbot and all its data.
+          </DialogDescription>
+        </DialogHeader>
+        <DialogFooter className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={handleDeleteCancel}
+            disabled={isDeleting}
+            className="flex-1 sm:flex-none"
+          >
+            Cancel
+          </Button>
+          <Button
+            onClick={handleDeleteConfirm}
+            disabled={isDeleting}
+            className="bg-red-600 hover:bg-red-700 text-white flex-1 sm:flex-none"
+          >
+            {isDeleting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                Deleting...
+              </>
+            ) : (
+              "Delete Chatbot"
+            )}
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
     </div>
+
+   
   );
 };
 

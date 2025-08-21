@@ -61,7 +61,7 @@ const PreviewBot = () => {
             toast.success("Chatbot created successfully");
             dispatch(resetCustomChatbot());
             dispatch(setSteps(1));
-            router.push("/my-bots");
+            router.push("/my-chatbots");
         } catch (error: any) {
             console.log(error);
             if (error.data.error) {
@@ -101,14 +101,14 @@ const PreviewBot = () => {
                     avatarId: avatarId,
                     themeColor: color,
                     botRole: selectedRole,
-                   
+
                 }
             }).unwrap();
             console.log(response);
             toast.success("Chatbot updated successfully");
             dispatch(resetCustomChatbot());
             dispatch(setSteps(1));
-            router.push("/my-bots");
+            router.push("/my-chatbots");
         }
         catch (error: any) {
             console.log(error);
@@ -119,11 +119,15 @@ const PreviewBot = () => {
     }
 
     return (
-        <div className=" bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
+        <div className=" bg-gradient-to-br rounded-2xl from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
             <div className="mx-auto">
                 {/* Main Confirmation Card */}
+
                 <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
                     {/* Bot Avatar Section */}
+                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
+                        Preview Your Chatbot
+                    </h2>
                     <div className="flex justify-center mb-8">
                         <div className="relative">
                             {/* Glowing Accent Border */}
@@ -134,7 +138,6 @@ const PreviewBot = () => {
                                     boxShadow: `0 0 20px ${color || "#6366f1"}40`
                                 }}
                             />
-
                             {/* Avatar Container */}
                             <div className="relative">
                                 {botAvatar ? (
@@ -158,7 +161,6 @@ const PreviewBot = () => {
                             </div>
                         </div>
                     </div>
-
                     {/* Bot Info Hierarchy */}
                     <div className="text-center mb-8">
                         {/* Bot Name */}
@@ -244,7 +246,7 @@ const PreviewBot = () => {
                             Back
                         </Button>
 
-                      {  !isEditing ? <Button
+                        {!isEditing ? <Button
                             className="w-48 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
 
                             onClick={handleNext}
@@ -262,24 +264,24 @@ const PreviewBot = () => {
                                 </div>
                             )}
                         </Button>
-                        :
-                        <Button
-                            className="w-48 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
-                            onClick={handleUpdateChatbot}
-                            disabled={isUpdatingBot || isLoading}
-                        >
-                            {isUpdatingBot || isLoading ? (
-                                <div className="flex items-center gap-2">
-                                    <Loader className="animate-spin w-5 h-5" />
-                                    <span>Updating...</span>
-                                </div>
-                            ) : (
-                                <div className="flex items-center gap-2">
-                                    <span>Update Chatbot</span>
-                                    <ChevronRight className="w-5 h-5" />
-                                </div>
-                            )}
-                        </Button>
+                            :
+                            <Button
+                                className="w-48 py-5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white rounded-xl font-semibold text-lg transition-all duration-200 hover:scale-105 shadow-lg"
+                                onClick={handleUpdateChatbot}
+                                disabled={isUpdatingBot || isLoading}
+                            >
+                                {isUpdatingBot || isLoading ? (
+                                    <div className="flex items-center gap-2">
+                                        <Loader className="animate-spin w-5 h-5" />
+                                        <span>Updating...</span>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center gap-2">
+                                        <span>Update Chatbot</span>
+                                        <ChevronRight className="w-5 h-5" />
+                                    </div>
+                                )}
+                            </Button>
                         }
                     </div>
                 </div>

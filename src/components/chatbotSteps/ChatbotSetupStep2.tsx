@@ -83,14 +83,14 @@ export default function ChatbotSetupStep2() {
   };
 
   return (
-    <div className="bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
+    <div className="bg-gradient-to-br rounded-2xl from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
       <div className="">
 
         {/* Main Form Card */}
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
           {/* Header */}
           <div className="mb-8">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               Bot Role
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-lg">
@@ -175,7 +175,7 @@ export default function ChatbotSetupStep2() {
                         dispatch(setSelectedRole(template.name));
                       }}
                       className={`relative hover:scale-105 p-4 border-2 rounded-xl cursor-pointer transition-all duration-200 ${isSelected
-                          ? 'border-transparent bg-gradient-to-r text-white from-blue-500 to-indigo-600 bg-clip-border shadow-lg'
+                          ? 'bg-gradient-to-r text-white from-blue-500 to-indigo-600 bg-clip-border shadow-lg'
                           : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                         }`}
                     >

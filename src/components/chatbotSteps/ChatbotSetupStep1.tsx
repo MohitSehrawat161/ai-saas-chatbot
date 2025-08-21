@@ -113,13 +113,13 @@ export default function ChatbotSetupStep1() {
 
 
   return (
-    <div className="bg-gradient-to-br w-full from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937] max-h-[calc(100vh-200px)] overflow-auto">
-      <div className="mx-auto ">
+    <div className="  max-h-[calc(100vh-200px)] overflow-auto rounded-2xl">
+      <div className="mx-auto  h-full">
         {/* Left Panel - Form */}
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
+        <div className="bg-white h-full dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-100 dark:border-gray-700/50 p-8">
           {/* Header */}
           <div className="mb-4">
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-1">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
               Bot Details
             </h2>
             <p className="text-gray-600 dark:text-gray-400 text-lg">

@@ -21,8 +21,7 @@ const ProgressSteps = ({ steps, currentStep }: ProgressStepsProps) => {
       <div
         className="absolute top-1/3 left-0 h-1 bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 -translate-y-1/2 rounded-full transition-all duration-500 ease-in-out"
         style={{
-           width: `${currentStep==1?14:currentStep==2?38:currentStep==3?62:88}%`,
-
+           width: `${currentStep==1?13:currentStep==2?38:currentStep==3?62:88}%`,
         }}
       ></div>
 

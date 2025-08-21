@@ -209,9 +209,9 @@ const DashboardPage = () => {
   const { data: bots, isLoading } = useGetBotsQuery();
   console.log(bots);
   return (
-    <Layout title="Dashboard">
+    // <Layout title="Dashboard">
       <div className="min-h-screen rounded-xl bg-gradient-to-br from-[#F9FAFB] to-[#EEF2FF] dark:from-[#111827] dark:to-[#1F2937]">
-        <div className="max-w-7xl mx-auto px-4 py-8">
+        <div className=" mx-auto px-4 py-8">
           {/* Welcome Header */}
           <div className="mb-8 ">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
@@ -247,7 +247,7 @@ const DashboardPage = () => {
         </div>
 
         {/* Floating Action Button */}
-      {bots && bots?.length < 1 && <Link href="/create-bot">
+      {bots && bots?.length < 1 && <Link href="/create-chatbot">
           <Button
             className="fixed w-48 bottom-8 right-8 z-50 shadow-2xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-md  py-4 rounded-full hover:scale-105 transition-all duration-200 border-0"
             size="lg"
@@ -256,9 +256,9 @@ const DashboardPage = () => {
             Create ChatBot
           </Button>
         </Link>}
-      </div>
-    </Layout>
-  );
+      </div>)
+    {/* </Layout> */}
+  // );
 };
 
 export default DashboardPage;
